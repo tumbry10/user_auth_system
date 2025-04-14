@@ -14,6 +14,17 @@ def userSignup(request):
         password1 = request.POST.get('password1')
         password2 = request.POST.get('password2')
 
+        #VALIDATE PASSWORD, CHECK IF THE 2 PASSWORDS MATCH
+        if password1 != password2:
+            return HttpResponse("Passwords do not match")
+        #CHECK IF THE USERNAME IS ALREADY TAKEN
+        if User.objects.filter(username=username).exists():
+            return HttpResponse("Username already taken")
+        #CHECK IF EMAIL IS ALREADY REGISTERED
+        if User.objects.filter(email=email).exists():
+            return HttpResponse("Email already registered")
+        
+        #CREATE A NEW USER
         user = User.objects.create_user(
             username = username,
             first_name = firstName,
