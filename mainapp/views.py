@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, HttpResponse
 from django.contrib.auth.models import User
+from django.contrib import messages
 
 # Create your views here.
 def dashboard(request):
@@ -16,13 +17,16 @@ def userSignup(request):
 
         #VALIDATE PASSWORD, CHECK IF THE 2 PASSWORDS MATCH
         if password1 != password2:
-            return HttpResponse("Passwords do not match")
+            messages.error(request, 'Passwords do not match')
+            return redirect('userSignup')
         #CHECK IF THE USERNAME IS ALREADY TAKEN
         if User.objects.filter(username=username).exists():
-            return HttpResponse("Username already taken")
+            messages.error(request, 'Username already taken')
+            return redirect('userSignup')
         #CHECK IF EMAIL IS ALREADY REGISTERED
         if User.objects.filter(email=email).exists():
-            return HttpResponse("Email already registered")
+            messages.error(request, 'Email already registered')
+            return redirect('userSignup')
         
         #CREATE A NEW USER
         user = User.objects.create_user(
@@ -33,7 +37,8 @@ def userSignup(request):
             password = password1
         )
         user.save()
-        return HttpResponse('User has been created Successfully')
+        messages.success(request, 'User created successfully, You can now login')
+        return redirect('userLogin')
 
 
         #print(username, firstName, lastName, email, password1, password2)
